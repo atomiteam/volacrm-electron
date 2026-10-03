@@ -40,4 +40,4 @@ Requires Node.js 22 or later. `npm ci`, `npm test`, `npm start`. On Windows: `np
 
 Remote content uses sandboxing, context isolation and disabled Node integration. IPC validates the exact approved origin and top-level frame. Other links open in the system browser, with no desktop bridge. Scripts intentionally have local user privileges and are not sandboxed. Never approve untrusted code. No automatic scripts, background service, or terminal input. Signing and auto-update are not configured for this trial.
 
-SSO providers that require leaving app.volacrm.com open in the system browser. If your current login flow requires an external redirect inside the desktop window, it needs a dedicated authentication/deep-link integration before that SSO flow will work.
+HTTPS login redirects can stay inside the desktop window; shell access is denied on other origins. Popup links open in the system browser. Providers that prohibit embedded browsers or require popup authentication need a dedicated authentication/deep-link integration.

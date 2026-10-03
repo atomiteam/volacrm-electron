@@ -27,7 +27,8 @@ function lockWindow(window, local = false) {
   window.webContents.setWindowOpenHandler(({ url }) => { external(url); return { action: 'deny' }; });
   window.webContents.on('will-attach-webview', event => event.preventDefault());
   window.webContents.on('will-navigate', (event, url) => {
-    if (local || new URL(url).origin !== APP_URL) { event.preventDefault(); if (!local) external(url); }
+    // HTTPS login redirects may stay in the window. IPC remains origin-locked.
+    if (local || new URL(url).protocol !== 'https:') { event.preventDefault(); if (!local) external(url); }
   });
   window.webContents.session.setPermissionRequestHandler((_contents, _permission, callback) => callback(false));
   window.webContents.session.setPermissionCheckHandler(() => false);
