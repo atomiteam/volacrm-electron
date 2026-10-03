@@ -4,6 +4,9 @@
 <title>VolaCRM Script Console</title><link rel="stylesheet" href="console.css"></head>
 <body><main><h1>Script Console</h1><p>Run a local script and follow its output. executionPath is the working directory.</p>
 <label>Working directory<input id="directory" placeholder="C:\Users\your-name or /home/your-name"></label>
+<label>Execution mode<select id="mode"><option value="console">Platform shell — output in VolaCRM</option><option value="tilix">Windows Tilix through WSL — interactive terminal</option></select></label>
+<label id="distribution-label" hidden>WSL distribution (optional)<input id="distribution" placeholder="Default distribution, or Ubuntu"></label>
+<p id="mode-hint">Output appears below. Stop and timeout apply to the script.</p>
 <div class="row"><label>Shell<select id="shell"><option value="powershell">Windows PowerShell</option><option value="pwsh">PowerShell 7 (installed separately)</option><option value="bash">Bash</option><option value="sh">sh</option></select></label><label>Timeout (seconds)<input id="timeout" type="number" min="1" max="600" value="120"></label></div>
 <label>Script code<textarea id="code" rows="7" spellcheck="false">Write-Output "Hello from VolaCRM"
 Write-Output "Parameter: $($args[0])"</textarea></label>

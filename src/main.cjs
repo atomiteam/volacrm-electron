@@ -3,6 +3,7 @@ const path = require('node:path');
 const { pathToFileURL } = require('node:url');
 const { randomUUID } = require('node:crypto');
 const { runScript, validate } = require('./runner.cjs');
+const { runScriptWindowsTilix, validateTilix } = require('./windows-tilix.cjs');
 const APP_URL = 'https://app.volacrm.com';
 const CONSOLE_URL = pathToFileURL(path.join(__dirname, 'console.html')).href;
 let mainWindow;
@@ -47,10 +48,11 @@ function broadcast(data) {
     if (url === CONSOLE_URL || url.startsWith(APP_URL + '/')) window.webContents.send('script:output', data);
   }
 }
-ipcMain.handle('script:execute', async (event, request) => {
+async function execute(event, request, tilix = false) {
   trusted(event);
   if (active) throw new Error('Another script is running or awaiting approval.');
-  const input = validate(request);
+  if (tilix && process.platform !== 'win32') throw new Error('Tilix through WSL requires Windows.');
+  const input = tilix ? validateTilix(request) : validate(request);
   const executionId = randomUUID();
   const controller = new AbortController();
   active = { controller, executionId };
@@ -59,15 +61,19 @@ ipcMain.handle('script:execute', async (event, request) => {
     const approval = await dialog.showMessageBox(owner, {
       type: 'warning', title: 'Run local script?',
       message: 'This script will run on your computer with your user permissions.',
-      detail: `Shell: ${input.shell}\nWorking directory: ${input.executionPath}\nParameters: ${JSON.stringify(input.parameters)}\n\n${input.scriptCode}`,
+      detail: `Shell: ${tilix ? 'Tilix / WSL Bash (' + (input.distribution || 'default distribution') + ')' : input.shell}\nWorking directory: ${input.executionPath}\nParameters: ${JSON.stringify(input.parameters)}\n\n${input.scriptCode}`,
       buttons: ['Cancel', 'Run script'], defaultId: 0, cancelId: 0, noLink: true
     });
     if (approval.response !== 1 || controller.signal.aborted) throw new Error('Execution cancelled.');
     trusted(event);
-    const result = await runScript(input, data => broadcast({ executionId, ...data }), controller.signal);
+    const result = tilix
+      ? await runScriptWindowsTilix(input, controller.signal)
+      : await runScript(input, data => broadcast({ executionId, ...data }), controller.signal);
     return { executionId, ...result };
   } finally { active = null; }
-});
+}
+ipcMain.handle('script:execute', (event, request) => execute(event, request));
+ipcMain.handle('script:windows-tilix', (event, request) => execute(event, request, true));
 ipcMain.handle('script:stop', event => { trusted(event); active?.controller.abort(); return Boolean(active); });
 app.whenReady().then(() => {
   mainWindow = new BrowserWindow({ width: 1400, height: 950, title: 'VolaCRM Desktop', webPreferences: options() });

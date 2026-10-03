@@ -1,6 +1,6 @@
 {
   "name": "volacrm-electron",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "VolaCRM desktop with local script execution and live output",
   "author": "VolaCRM",
   "private": true,
