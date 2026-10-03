@@ -43,6 +43,7 @@ test('Linux launcher preserves special arguments and cleans up after terminal co
   const linuxFolder = `/tmp/volacrm-tilix-${id}`;
   try {
     const bin = path.join(folder, 'bin'); await mkdir(bin);
+    await writeFile(path.join(bin, 'dbus-run-session'), '#!/bin/sh\n[ "$1" = "--" ] && shift\nexec "$@"\n', { mode: 0o700 });
     // Simulate only the Tilix boundary; the real launcher and wrapper run unchanged.
     await writeFile(path.join(bin, 'tilix'), '#!/bin/bash\nfor arg in "$@"; do\n case "$arg" in --command=*) command=${arg#--command=};; esac\ndone\n{ sleep 1; printf "\\n"; } | /bin/sh -c "$command"\n', { mode: 0o700 });
     const output = path.join(folder, 'arguments');
