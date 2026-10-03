@@ -1,0 +1,19 @@
+{
+  "name": "volacrm-electron",
+  "version": "0.1.0",
+  "description": "VolaCRM desktop with local script execution and live output",
+  "author": "VolaCRM",
+  "private": true,
+  "main": "src/main.cjs",
+  "scripts": { "start": "electron .", "test": "node --test", "build:windows": "electron-builder --win nsis portable --x64 --publish never" },
+  "devDependencies": { "electron": "44.5.1", "electron-builder": "26.15.3" },
+  "build": {
+    "appId": "com.volacrm.desktop",
+    "productName": "VolaCRM Desktop",
+    "files": ["src/**/*", "package.json"],
+    "directories": { "output": "dist" },
+    "win": { "target": ["nsis", "portable"], "signAndEditExecutable": false },
+    "nsis": { "oneClick": false, "allowToChangeInstallationDirectory": true, "artifactName": "VolaCRM-Desktop-${version}-Setup-${arch}.${ext}" },
+    "portable": { "artifactName": "VolaCRM-Desktop-${version}-Portable-${arch}.${ext}" }
+  }
+}

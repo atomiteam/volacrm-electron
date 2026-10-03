@@ -1,0 +1,12 @@
+<!doctype html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; connect-src 'none'">
+<title>VolaCRM Script Console</title><link rel="stylesheet" href="console.css"></head>
+<body><main><h1>Script Console</h1><p>Run a local script and follow its output. executionPath is the working directory.</p>
+<label>Working directory<input id="directory" placeholder="C:\Users\your-name or /home/your-name"></label>
+<div class="row"><label>Shell<select id="shell"><option value="powershell">Windows PowerShell</option><option value="pwsh">PowerShell 7 (installed separately)</option><option value="bash">Bash</option><option value="sh">sh</option></select></label><label>Timeout (seconds)<input id="timeout" type="number" min="1" max="600" value="120"></label></div>
+<label>Script code<textarea id="code" rows="7" spellcheck="false">Write-Output "Hello from VolaCRM"
+Write-Output "Parameter: $($args[0])"</textarea></label>
+<label>Parameters (JSON array)<input id="parameters" value='["Sami"]'></label>
+<div class="row buttons"><button id="run">Run script</button><button id="stop" disabled>Stop</button><button id="clear">Clear output</button><button id="save">Save log</button></div>
+<p id="status" role="status">Ready</p><pre id="output" role="log" aria-live="off"></pre></main><script src="console.js"></script></body></html>
